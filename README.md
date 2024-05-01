@@ -43,4 +43,4 @@ Please cite Caffe in your publications if it helps your research:
 
 ## hipCaffe: the HIP Port of Caffe
 
-For details on the HIP Port of Caffe, please take a look at the [README.ROCm.md](https://github.com/ROCmSoftwarePlatform/hipCaffe/blob/hip/README.ROCm.md) file.  
+For details on the HIP Port of Caffe, please take a look at the [README.ROCm.md](https://github.com/ROCm/hipCaffe/blob/hip/README.ROCm.md) file.  
