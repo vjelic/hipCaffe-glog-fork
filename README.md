@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/BVLC/caffe.svg?branch=master)](https://travis-ci.org/BVLC/caffe)
 [![License](https://img.shields.io/badge/license-BSD-blue.svg)](LICENSE)
 
-**Deprication Notice:**
+**Deprecation Notice:**
 * ROCm Component: hipCaffe
 * Last version of ROCm which officially supported this component: ROCm 1.9
 * Reason for dropping support: Lack of community interest.
