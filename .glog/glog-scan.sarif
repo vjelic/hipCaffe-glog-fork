@@ -1,0 +1,1977 @@
+{
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Glog.AI",
+          "organization": "Glog.AI",
+          "fullName": "Glog, Making software more secure",
+          "version": "1.0.0",
+          "semanticVersion": "1.0.0",
+          "informationUri": "https://www.glog.ai",
+          "rules": [
+            {
+              "id": "glog-ce953cba-244f-467b-b1c8-dc005373b1f2",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nIn C++ programming, the vulnerability \"Avoid Using Weak or Non-Cryptographic Random Number Generators\" refers to the use of weak or non-cryptographic random number generators that can lead to predictable or easily guessable values. This can be exploited by attackers to predict the outcome of the program, leading to a variety of security issues such as password cracking, session hijacking, and others.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to use strong cryptographic random number generators. In C++, the `<random>` library provides a variety of random number generators that can be used. Among these, `std::random_device` is a universally generating random number engine if available, otherwise it has an implementation-defined behavior.\n\n## Source Code Fix Recommendation\n\nHere is an example of how to use `std::random_device` to generate a random number:\n\n```cpp\n#include <random>\n\nint main() {\n    std::random_device rd;  // Will be used to obtain a seed for the random number engine\n    std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()\n    std::uniform_int_distribution<> distrib(1, 6);\n\n    int random_number = distrib(gen);\n    // Use the random number...\n}\n```\n\nIn this code, `std::random_device` is used to seed a Mersenne Twister random number generator (`std::mt19937`). Then, a uniform distribution is created to generate a random number between 1 and 6.\n\n## Library Dependencies\n\nThe above code requires the `<random>` library.\n\n## References\n"
+              },
+              "properties": {
+                "tags": [
+                  "DS148264"
+                ]
+              }
+            },
+            {
+              "id": "glog-23ee7553-7380-4082-a799-b584c009fe8b",
+              "help": {
+                "text": "",
+                "markdown": "### Description of \"Unsecured URL\" Vulnerability in C++ Programming Language\n\nAn \"Unsecured URL\" vulnerability occurs when a program uses URLs that are not protected by secure protocols, such as HTTPS. This can lead to various security issues, including man-in-the-middle attacks, where an attacker intercepts and potentially alters the communication between the client and server. In C++ applications, this vulnerability can arise when using libraries or functions that handle URL requests without enforcing secure protocols.\n\n### General Mitigation Advice\n\n1. **Use HTTPS**: Always use HTTPS instead of HTTP to ensure that data is encrypted during transmission.\n2. **Validate URLs**: Ensure that URLs are validated and sanitized before use.\n3. **Use Secure Libraries**: Utilize libraries that support secure connections and have built-in mechanisms for handling secure URLs.\n4. **Certificate Validation**: Implement proper certificate validation to prevent man-in-the-middle attacks.\n\n### Source Code Fix Recommendation\n\nBelow is an example of how to fix an unsecured URL vulnerability in C++ by using a secure library that supports HTTPS:\n\n```cpp\n#include <iostream>\n#include <curl/curl.h>\n\n// Function to perform a secure HTTPS request\nvoid performSecureRequest(const std::string& url) {\n    CURL* curl;\n    CURLcode res;\n\n    curl_global_init(CURL_GLOBAL_DEFAULT);\n    curl = curl_easy_init();\n\n    if(curl) {\n        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());\n        \n        // Enforce HTTPS\n        curl_easy_setopt(curl, CURLOPT_USE_SSL, CURLUSESSL_ALL);\n        \n        // Perform the request\n        res = curl_easy_perform(curl);\n\n        // Check for errors\n        if(res != CURLE_OK) {\n            std::cerr << \"curl_easy_perform() failed: \" << curl_easy_strerror(res) << std::endl;\n        }\n\n        // Clean up\n        curl_easy_cleanup(curl);\n    }\n\n    curl_global_cleanup();\n}\n\nint main() {\n    std::string secureUrl = \"https://www.cygnus-software.com\";\n    performSecureRequest(secureUrl);\n    return 0;\n}\n```\n\n### Library Dependencies\n\nTo execute the above code example, the following library dependencies are required:\n\n- `libcurl`: A free and easy-to-use client-side URL transfer library, supporting HTTPS.\n\n### OWASP Resources\n\n- [OWASP Transport Layer Protection Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html)\n- [OWASP Secure Coding Practices - Quick Reference Guide](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/)\n\n### Common Weakness Enumeration (CWE)\n\n- [CWE-319: Cleartext Transmission of Sensitive Information](https://cwe.mitre.org/data/definitions/319.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS137138"
+                ]
+              }
+            },
+            {
+              "id": "glog-087c8ca5-5367-42df-a067-19a55f9962a5",
+              "help": {
+                "text": "",
+                "markdown": "### Description\n\nThe vulnerability associated with the `strlen` function in C++ arises when it is used improperly, leading to potential buffer overflows or reading beyond the allocated memory. This can occur if the input string is not null-terminated or if the pointer passed to `strlen` is invalid. Such issues can lead to undefined behavior, crashes, or security vulnerabilities like information disclosure or code execution.\n\n### General Mitigation Advice\n\n1. **Input Validation**: Ensure that all input strings are properly null-terminated before passing them to `strlen`.\n2. **Pointer Validation**: Validate pointers before using them to ensure they point to valid memory locations.\n3. **Use Safer Alternatives**: Consider using safer string handling functions or libraries that provide bounds checking, such as `std::string` in C++.\n\n### Source Code Fix Recommendation\n\n```cpp\n#include <iostream>\n#include <cstring> // Required for strlen\n#include <string>  // Required for std::string\n\nint main() {\n    std::string safeString = \"Hello, World!\";\n    // Use std::string::length() instead of strlen for safety\n    size_t length = safeString.length();\n    std::cout << \"Length of the string is: \" << length << std::endl;\n    return 0;\n}\n```\n\n### Library Dependencies\n\n- `<iostream>`: For input and output stream operations.\n- `<cstring>`: For C-style string operations (though not used in the fixed example, it's required for `strlen`).\n- `<string>`: For using `std::string` which provides safer string handling.\n\n### Relevant Resources\n\n- [OWASP Top Ten](https://owasp.org/www-project-top-ten/)\n- [OWASP Secure Coding Practices](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/)\n\n### Common Weakness Enumeration\n\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n- [CWE-126: Buffer Over-read](https://cwe.mitre.org/data/definitions/126.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS140021"
+                ]
+              }
+            },
+            {
+              "id": "glog-f099dcad-eafb-44b1-8082-69f7bb0be4eb",
+              "help": {
+                "text": "",
+                "markdown": "### Description\n\nThe \"Unsecured URL\" vulnerability in C++ programming occurs when a program constructs URLs without proper validation or sanitization, potentially leading to security issues such as information leakage, man-in-the-middle attacks, or redirection to malicious sites. This vulnerability can be exploited if user input is directly used to form URLs without adequate checks.\n\n### General Mitigation Advice\n\n1. **Input Validation**: Always validate and sanitize user inputs before using them to construct URLs.\n2. **Use Secure Protocols**: Prefer HTTPS over HTTP to ensure data is encrypted during transmission.\n3. **Whitelist URLs**: Implement a whitelist of allowed URLs to prevent redirection to unauthorized sites.\n4. **Library Functions**: Use library functions that handle URL construction and validation securely.\n\n### Source Code Fix Recommendation\n\nBelow is a C++ code example demonstrating a potential fix for an unsecured URL vulnerability. The example uses the `cpp-netlib` library to safely construct and validate URLs.\n\n```cpp\n#include <iostream>\n#include <boost/network/protocol/http/client.hpp>\n\nint main() {\n    using namespace boost::network;\n    using namespace boost::network::http;\n\n    // User input\n    std::string user_input = \"wikipedia.org\";\n\n    // Validate and construct URL\n    if (user_input.find(\"http://\") == std::string::npos && user_input.find(\"https://\") == std::string::npos) {\n        user_input = \"https://\" + user_input;\n    }\n\n    try {\n        client::request request(user_input);\n        client client_;\n        client::response response = client_.get(request);\n\n        std::cout << body(response) << std::endl;\n    } catch (std::exception &e) {\n        std::cerr << \"Error: \" << e.what() << std::endl;\n    }\n\n    return 0;\n}\n```\n\n### Library Dependencies\n\nTo execute the above code example, the following library dependencies are required:\n\n- Boost C++ Libraries (specifically `cpp-netlib`)\n\n### OWASP Resources\n\n- [OWASP Top Ten](https://owasp.org/www-project-top-ten/)\n- [OWASP Secure Coding Practices](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/)\n\n### Common Weakness Enumeration (CWE)\n\n- [CWE-601: URL Redirection to Untrusted Site ('Open Redirect')](https://cwe.mitre.org/data/definitions/601.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS137138"
+                ]
+              }
+            },
+            {
+              "id": "glog-ca046faa-5af5-4aac-b58e-eb08a3d0905c",
+              "help": {
+                "text": "",
+                "markdown": "### Description\n\nThe \"Unsecured URL\" vulnerability in C++ programming occurs when a program constructs URLs without proper validation or sanitization, potentially leading to security issues such as information leakage, man-in-the-middle attacks, or redirection to malicious sites. This vulnerability can be exploited if user input is directly used to form URLs without adequate checks.\n\n### General Mitigation Advice\n\n1. **Input Validation**: Always validate and sanitize user inputs before using them to construct URLs.\n2. **Use Secure Protocols**: Prefer HTTPS over HTTP to ensure data is encrypted during transmission.\n3. **Whitelist URLs**: Implement a whitelist of allowed URLs to prevent redirection to unauthorized sites.\n4. **Library Functions**: Use library functions that handle URL construction and validation securely.\n\n### Source Code Fix Recommendation\n\nBelow is a C++ code example demonstrating a potential fix for an unsecured URL vulnerability. The example uses the `cpp-netlib` library to safely construct and validate URLs.\n\n```cpp\n#include <iostream>\n#include <boost/network/protocol/http/client.hpp>\n\nint main() {\n    using namespace boost::network;\n    using namespace boost::network::http;\n\n    // User input\n    std::string user_input = \"wikipedia.org\";\n\n    // Validate and construct URL\n    if (user_input.find(\"http://\") == std::string::npos && user_input.find(\"https://\") == std::string::npos) {\n        user_input = \"https://\" + user_input;\n    }\n\n    try {\n        client::request request(user_input);\n        client client_;\n        client::response response = client_.get(request);\n\n        std::cout << body(response) << std::endl;\n    } catch (std::exception &e) {\n        std::cerr << \"Error: \" << e.what() << std::endl;\n    }\n\n    return 0;\n}\n```\n\n### Library Dependencies\n\nTo execute the above code example, the following library dependencies are required:\n\n- Boost C++ Libraries (specifically `cpp-netlib`)\n\n### OWASP Resources\n\n- [OWASP Top Ten](https://owasp.org/www-project-top-ten/)\n- [OWASP Secure Coding Practices](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/)\n\n### Common Weakness Enumeration (CWE)\n\n- [CWE-601: URL Redirection to Untrusted Site ('Open Redirect')](https://cwe.mitre.org/data/definitions/601.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS137138"
+                ]
+              }
+            },
+            {
+              "id": "glog-e47e6e33-64f8-4c70-835b-fefde91dec4b",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `strncpy` function in C++ is used to copy a string from source to destination. However, it can lead to vulnerabilities if not used properly. The function does not guarantee to null-terminate the destination string when the source string length is greater than or equal to the destination string size. This can lead to buffer overflow vulnerabilities, which can be exploited to execute arbitrary code, cause a system crash, or expose sensitive information.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, consider using safer string handling functions that ensure null-termination of the destination string. Functions such as `strlcpy` or `strncpy_s` can be used as safer alternatives. Also, always ensure that the destination buffer is large enough to hold the source string including the null-terminating character.\n\n## Source Code Fix Recommendation\n\nReplace the `strncpy` function with a safer alternative. For example:\n\n```cpp\n#include <string.h>\n\nchar dest[100];\nconst char* src = \"source string\";\nsize_t n = sizeof(dest);\n\nstrncpy_s(dest, n, src, _TRUNCATE);\n```\n\nIn this example, `strncpy_s` is used instead of `strncpy`. The `_TRUNCATE` option ensures that the destination string is null-terminated even when the source string is longer than the destination buffer size.\n\n## Library Dependencies\n\nThe `strncpy_s` function is part of the C Standard Library, so no additional library dependencies are required.\n\n## References\n\n\nPlease note that the links provided are accessible to anonymous users at the time of writing this report."
+              },
+              "properties": {
+                "tags": [
+                  "DS111237"
+                ]
+              }
+            },
+            {
+              "id": "glog-6e5e2b23-d2f3-4907-b05b-30e574dba889",
+              "help": {
+                "text": "",
+                "markdown": "### Description\n\nThe \"Detected Issue with C Function (memcpy)\" vulnerability in C++ arises when the `memcpy` function is used improperly, potentially leading to buffer overflows. This occurs when the source buffer size exceeds the destination buffer size, causing data to be written beyond the allocated memory. This can lead to undefined behavior, including data corruption, crashes, and security vulnerabilities such as arbitrary code execution.\n\n### General Mitigation Advice\n\n1. **Validate Input Sizes**: Always ensure that the size of the source buffer does not exceed the size of the destination buffer.\n2. **Use Safer Alternatives**: Consider using safer functions like `memmove` or `std::copy` from the C++ Standard Library, which provide bounds checking.\n3. **Static Analysis Tools**: Utilize static analysis tools to detect potential buffer overflows during development.\n4. **Code Reviews**: Regularly conduct code reviews to identify and mitigate potential vulnerabilities.\n\n### Source Code Fix Recommendation\n\nGiven the vulnerable code:\n\n```cpp\nmemcpy(str, buffer, a_length);\n```\n\nA safer approach would be:\n\n```cpp\n#include <cstring> // Required for std::memcpy\n#include <algorithm> // Required for std::min\n\n// Ensure that the destination buffer size is known\nsize_t str_size = /* size of str buffer */;\n\n// Use std::min to prevent buffer overflow\nstd::memcpy(str, buffer, std::min(a_length, str_size));\n```\n\n### Library Dependencies\n\nTo execute the code example properly, the following library dependencies are required:\n\n- `<cstring>`: For the `std::memcpy` function.\n- `<algorithm>`: For the `std::min` function.\n\n### Relevant Resources\n\n- [OWASP Top Ten](https://owasp.org/www-project-top-ten/)\n- [OWASP Secure Coding Practices](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/)\n\n### Common Weakness Enumeration\n\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "glog-7cd23e6d-f00a-4282-8c97-41806ac937d0",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `malloc` function in C is used to dynamically allocate a block of memory and returns a pointer of void which can be cast into a pointer of any form. The issue with the `malloc` function arises when the size of the memory to be allocated is not properly validated or calculated, leading to buffer overflow, memory corruption, or other related vulnerabilities.\n\nIn the given code snippet `malloc(len + 3)`, if the `len` variable is user-controlled and not properly validated, it can lead to a buffer overflow vulnerability. An attacker can provide a large value for `len` that, when added to 3, exceeds the maximum value that can be allocated, causing an integer overflow. This would result in a smaller buffer being allocated than expected, leading to buffer overflow when the buffer is used.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should:\n\n1. Always validate and sanitize user input. Never trust user input blindly.\n2. Check for integer overflows before performing memory allocation.\n3. Use functions that limit the amount of data written into the buffer.\n\n## Source Code Fix Recommendation\n\nHere is a simple fix for the given code snippet:\n\n```c++\n#include <climits>\n\n// Check for integer overflow\nif (len > INT_MAX - 3) {\n    // Handle error: len is too large\n    return;\n}\n\n// Allocate memory\nvoid* buffer = malloc(len + 3);\n\nif (buffer == NULL) {\n    // Handle error: memory allocation failed\n    return;\n}\n\n// Use buffer\n// ...\n\n// Free memory\nfree(buffer);\n```\n\n## Library Dependencies\n\nThe `malloc` function is part of the C Standard Library, so no additional libraries are needed for the code to execute properly.\n\n## References\n\n- [OWASP C/C++ Vulnerabilities](https://owasp.org/www-pdf-archive/OWASP_SCP_Quick_Reference_Guide_v2.pdf)\n\n## Matching CWE\n"
+              },
+              "properties": {
+                "tags": [
+                  "DS161085"
+                ]
+              }
+            },
+            {
+              "id": "glog-1817e8c7-b6b0-4d05-9db3-95c8e645fa4b",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nAn \"Unsecured Web Address\" vulnerability refers to the use of unencrypted HTTP protocol instead of the secure HTTPS protocol for communication. This can lead to Man-in-the-Middle (MitM) attacks where an attacker can intercept and possibly alter the communication between the client and the server. In C++ programming, this vulnerability can occur when libraries or functions that perform HTTP requests are used without ensuring the use of HTTPS.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always use HTTPS for all web communications. HTTPS ensures that all communication between the client and the server is encrypted and cannot be read or altered by an attacker even if they manage to intercept the communication.\n\n## Source Code Fix Recommendation\n\nThe specific vulnerability sink provided does not contain any C++ code, but here is a general recommendation for using HTTPS in C++:\n\n```cpp\n#include <curl/curl.h>\n\nint main(void)\n{\n  CURL *curl;\n  CURLcode res;\n\n  curl_global_init(CURL_GLOBAL_DEFAULT);\n\n  curl = curl_easy_init();\n  if(curl) {\n    curl_easy_setopt(curl, CURLOPT_URL, \"https://code.google.com\");\n\n    /* Perform the request, res will get the return code */ \n    res = curl_easy_perform(curl);\n    /* Check for errors */ \n    if(res != CURLE_OK)\n      fprintf(stderr, \"curl_easy_perform() failed: %s\\n\",\n              curl_easy_strerror(res));\n\n    /* always cleanup */ \n    curl_easy_cleanup(curl);\n  }\n\n  curl_global_cleanup();\n\n  return 0;\n}\n```\n\n## Library Dependencies\n\nThe above code requires the libcurl library. You can install it using the package manager for your system. For example, on Ubuntu, you can install it with:\n\n```\nsudo apt-get install libcurl4-openssl-dev\n```\n\n## OWASP Resources\n\n- [OWASP Secure Coding Practices](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/)\n- [OWASP Top 10 2017: A6-Security Misconfiguration](https://owasp.org/www-project-top-ten/2017/A6_2017-Security_Misconfiguration)\n\n## Common Weakness Enumeration (CWE)\n"
+              },
+              "properties": {
+                "tags": [
+                  "DS137138"
+                ]
+              }
+            },
+            {
+              "id": "glog-d9a71419-0b60-4362-90bf-b98c4d5954bc",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `strlen(s)` function in C++ is used to find the length of a string. The vulnerability arises when the string `s` is not null-terminated. This can lead to buffer overflows, memory corruption, and other unexpected behavior, as `strlen(s)` will continue reading memory until it encounters a null character.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that your strings are null-terminated. This can be done by initializing your strings with a null character at the end, or by manually adding a null character at the end of your string after it has been modified.\n\n## Source Code Fix Recommendation\n\nInstead of using `strlen(s)`, consider using `strnlen(s, MAX_LEN)`, where `MAX_LEN` is the maximum expected length of your string. This function will only read up to `MAX_LEN` characters, preventing potential buffer overflows.\n\n```cpp\n#include <string.h>\n\n#define MAX_LEN 100\n\nchar s[MAX_LEN];\n// ... modify s ...\nsize_t len = strnlen(s, MAX_LEN);\n```\n\n## Library Dependencies\n\nThe `strlen` and `strnlen` functions are part of the `<string.h>` library in C++.\n\n## References\n\n- [OWASP C++](https://owasp.org/www-pdf-archive/OWASP_SCP_Quick_Reference_Guide_v2.pdf)"
+              },
+              "properties": {
+                "tags": [
+                  "DS140021"
+                ]
+              }
+            },
+            {
+              "id": "glog-4fec38fc-d545-48b8-aedb-de5cb0bc148a",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\n\"Issue Detected with C Function (memcpy)\" is a common vulnerability in C++ programming language. It occurs when the `memcpy` function is used improperly, leading to buffer overflow. This can happen when the size of the data being copied is larger than the size of the destination buffer. This can lead to overwriting of adjacent memory and can cause unpredictable behavior, including memory corruption, crashes, and security vulnerabilities.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the data and the size of the buffer before the `memcpy` operation. Also, consider using safer functions such as `strncpy` or `memcpy_s` which include the size of the destination as a parameter.\n\n## Source Code Fix Recommendation\n\nHere is a fixed version of the code:\n\n```cpp\nif (len <= sizeof(buffer)) {\n    memcpy(buffer, regex, len);\n} else {\n    // Handle error\n}\n```\n\nIn this version, we first check if the size of the data (`len`) is less than or equal to the size of the buffer. If it is, we proceed with the `memcpy` operation. If it is not, we handle the error in an appropriate way.\n\n## Library Dependencies\n\nThe code example requires the following library dependencies:\n\n- `<cstring>`: This library provides the `memcpy` function.\n\n## OWASP Resources\n\n- [Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n## Common Weakness Enumeration (CWE)\n"
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "glog-1a45bdfe-035e-4254-99e3-a6f4e405c287",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `strlen` function in C++ is used to find the length of a string. However, it can lead to vulnerabilities if not used properly. The function counts the number of characters in a string until it reaches a null character (`\\0`). If the string is not properly null-terminated, `strlen` will continue reading memory beyond the intended boundary, leading to a buffer overflow. This can result in crashes, incorrect behavior, or potential code execution.\n\nIn the specific case of `strlen(regex)`, if `regex` is not a null-terminated string, it can lead to the aforementioned issues.\n\n## Mitigation Advice\n\nTo mitigate this issue, always ensure that your strings are null-terminated. This can be done by initializing your strings with a null character at the end, or by manually adding a null character at the end of your string after it has been modified.\n\nAdditionally, consider using safer alternatives to `strlen` that take a maximum length parameter, such as `strnlen`. This function will stop reading memory after a certain number of characters, even if it has not encountered a null character.\n\n## Source Code Fix Recommendation\n\nReplace `strlen(regex)` with `strnlen(regex, MAX_LENGTH)`, where `MAX_LENGTH` is the maximum expected length of your string.\n\n```cpp\n#include <string.h>\n\n#define MAX_LENGTH 100\n\n// ...\n\nsize_t length = strnlen(regex, MAX_LENGTH);\n```\n\n## Library Dependencies\n\nThe `strlen` and `strnlen` functions are part of the `<string.h>` library in C++. Therefore, this library must be included for the code to execute properly.\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS140021"
+                ]
+              }
+            },
+            {
+              "id": "glog-846fbdc6-9515-4b43-a424-7b4bed113650",
+              "help": {
+                "text": "",
+                "markdown": "### Description of \"Unsecured URL\" Vulnerability in C++ Programming Language\n\nAn \"Unsecured URL\" vulnerability occurs when a program uses URLs that are not secured with HTTPS, potentially exposing sensitive data to interception or tampering by attackers. In C++ applications, this can happen when URLs are hardcoded or constructed without considering security implications, leading to data being transmitted over an unencrypted channel.\n\n### General Mitigation Advice\n\n1. **Use HTTPS**: Always use HTTPS instead of HTTP to ensure that data is encrypted during transmission.\n2. **Validate URLs**: Ensure that URLs are validated and sanitized before use.\n3. **Configuration**: Use configuration files or environment variables to manage URLs, allowing for easier updates and security management.\n4. **Security Libraries**: Utilize libraries that enforce secure connections and provide mechanisms for validating certificates.\n\n### Source Code Fix Recommendation\n\nIf your C++ application is using an unsecured URL, you should update the code to use HTTPS. Here's an example of how you might fix this in a C++ application:\n\n```cpp\n#include <iostream>\n#include <curl/curl.h>\n\nint main() {\n    CURL *curl;\n    CURLcode res;\n\n    curl_global_init(CURL_GLOBAL_DEFAULT);\n    curl = curl_easy_init();\n    if(curl) {\n        // Use HTTPS instead of HTTP\n        curl_easy_setopt(curl, CURLOPT_URL, \"https://msdn.microsoft.com\");\n\n        // Perform the request, res will get the return code\n        res = curl_easy_perform(curl);\n\n        // Check for errors\n        if(res != CURLE_OK)\n            fprintf(stderr, \"curl_easy_perform() failed: %s\\n\", curl_easy_strerror(res));\n\n        // Cleanup\n        curl_easy_cleanup(curl);\n    }\n\n    curl_global_cleanup();\n    return 0;\n}\n```\n\n### Library Dependencies\n\nTo execute the above code example, you need the following library:\n\n- **libcurl**: A free and easy-to-use client-side URL transfer library, supporting a range of protocols including HTTPS.\n\n### OWASP Resources\n\n- [OWASP Transport Layer Protection Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html)\n- [OWASP Secure Coding Practices - Quick Reference Guide](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/)\n\n### Common Weakness Enumeration (CWE)\n\n- [CWE-319: Cleartext Transmission of Sensitive Information](https://cwe.mitre.org/data/definitions/319.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS137138"
+                ]
+              }
+            },
+            {
+              "id": "glog-1aef928c-5ad9-4529-8399-a2282c387187",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `strlen(str)` function in C++ is used to find the length of a string. The vulnerability arises when the string `str` is not null-terminated, which can lead to buffer overflows, memory corruption, and other unexpected behaviors. This is because `strlen(str)` counts characters until it encounters a null character (`\\0`), and if it doesn't find one, it could continue reading and returning data from memory beyond the intended boundary of the string.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that your strings are null-terminated. This can be done by initializing your strings with a null character at the end, or by manually adding a null character at the end of your strings after they have been modified.\n\nAlso, consider using safer alternatives to `strlen(str)`, such as `strnlen(str, max_len)`, which takes a maximum length parameter and will not read beyond this limit, even if it doesn't encounter a null character.\n\n## Source Code Fix Recommendation\n\nInstead of:\n\n```cpp\n#include <cstring>\n\nchar str[] = \"Hello, World!\";\nsize_t len = strlen(str);\n```\n\nUse:\n\n```cpp\n#include <cstring>\n\nchar str[] = \"Hello, World!\";\nsize_t max_len = sizeof(str) / sizeof(str[0]) - 1;\nsize_t len = strnlen(str, max_len);\n```\n\n## Library Dependencies\n\nThe `strlen` and `strnlen` functions are part of the `<cstring>` library in C++.\n\n## References\n\n- [OWASP C++](https://owasp.org/www-pdf-archive/OWASP_SCP_v2.pdf)"
+              },
+              "properties": {
+                "tags": [
+                  "DS140021"
+                ]
+              }
+            },
+            {
+              "id": "glog-12626098-34e4-42a7-b8e3-0f5c980fe3e2",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `strlen(str)` function in C++ is used to find the length of a string. The vulnerability arises when the string `str` is not null-terminated, which can lead to buffer overflows, memory corruption, and other unexpected behaviors. This is because `strlen(str)` counts characters until it encounters a null character (`\\0`), and if it doesn't find one, it could continue reading and returning data from memory beyond the intended boundary of the string.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that your strings are null-terminated. This can be done by initializing your strings with a null character at the end, or by manually adding a null character at the end of your strings after they have been modified.\n\nAlso, consider using safer alternatives to `strlen(str)`, such as `strnlen(str, max_len)`, which takes a maximum length parameter and will not read beyond this limit, even if it doesn't encounter a null character.\n\n## Source Code Fix Recommendation\n\nInstead of:\n\n```cpp\n#include <cstring>\n\nchar str[] = \"Hello, World!\";\nsize_t len = strlen(str);\n```\n\nUse:\n\n```cpp\n#include <cstring>\n\nchar str[] = \"Hello, World!\";\nsize_t max_len = sizeof(str) / sizeof(str[0]) - 1;\nsize_t len = strnlen(str, max_len);\n```\n\n## Library Dependencies\n\nThe `strlen` and `strnlen` functions are part of the `<cstring>` library in C++.\n\n## References\n\n- [OWASP C++](https://owasp.org/www-pdf-archive/OWASP_SCP_v2.pdf)"
+              },
+              "properties": {
+                "tags": [
+                  "DS140021"
+                ]
+              }
+            },
+            {
+              "id": "glog-f9553f11-d478-4565-955e-7d62d4a16a6e",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `strlen` function in C++ is used to find the length of a string. However, it can lead to vulnerabilities if not used properly. The function counts the number of characters in a string until it reaches a null character (`\\0`). If the string is not properly null-terminated, `strlen` will continue reading memory beyond the intended boundary, leading to a buffer overflow. This can result in crashes, incorrect behavior, or potential code execution.\n\nIn the specific case of `strlen(regex)`, if `regex` is not a null-terminated string, it can lead to the aforementioned issues.\n\n## Mitigation Advice\n\nTo mitigate this issue, always ensure that your strings are null-terminated. This can be done by initializing your strings with a null character at the end, or by manually adding a null character at the end of your string after it has been modified.\n\nAdditionally, consider using safer alternatives to `strlen` that take a maximum length parameter, such as `strnlen`. This function will stop reading memory after a certain number of characters, even if it has not encountered a null character.\n\n## Source Code Fix Recommendation\n\nReplace `strlen(regex)` with `strnlen(regex, MAX_LENGTH)`, where `MAX_LENGTH` is the maximum expected length of your string.\n\n```cpp\n#include <string.h>\n\n#define MAX_LENGTH 100\n\n// ...\n\nsize_t length = strnlen(regex, MAX_LENGTH);\n```\n\n## Library Dependencies\n\nThe `strlen` and `strnlen` functions are part of the `<string.h>` library in C++. Therefore, this library must be included for the code to execute properly.\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS140021"
+                ]
+              }
+            },
+            {
+              "id": "glog-6edeb151-428c-4bf4-a16f-59c04158bb1c",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `strlen()` function in C++ is used to find the length of a string. However, it can lead to vulnerabilities if not used properly. The function counts the number of characters in a string until it reaches a null character (`\\0`). If the string is not null-terminated, `strlen()` will continue reading memory until it encounters a null character, potentially leading to buffer overflows, memory corruption, and other undefined behaviors.\n\n## Mitigation Advice\n\nTo mitigate this issue, always ensure that your strings are null-terminated. Avoid using `strlen()` on strings that may not be null-terminated. Instead, consider using safer alternatives such as `strnlen()`, which takes an additional parameter to specify the maximum number of characters to be examined.\n\n## Source Code Fix Recommendation\n\nInstead of:\n\n```cpp\n#include <cstring>\n\nconst char* prefix = \"example\";\nsize_t length = strlen(prefix);\n```\n\nUse:\n\n```cpp\n#include <cstring>\n\nconst char* prefix = \"example\";\nsize_t length = strnlen(prefix, MAX_LENGTH);\n```\n\nWhere `MAX_LENGTH` is the maximum expected length of the string.\n\n## Library Dependencies\n\nThe code example requires the `<cstring>` library.\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n\nPlease note that the links provided are accessible to anonymous users at the time of writing this report."
+              },
+              "properties": {
+                "tags": [
+                  "DS140021"
+                ]
+              }
+            },
+            {
+              "id": "glog-778bbabe-5bad-4bde-b41f-d748ab7bfc0d",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `strlen` function in C and C++ is used to find the length of a string. However, it can be problematic if not used correctly. The function counts the number of characters in a string until it reaches a null character (`\\0`). If the string is not properly null-terminated, `strlen` will continue reading memory beyond the intended boundary, leading to undefined behavior, which can include crashes, incorrect program behavior, or even security vulnerabilities such as buffer overflows.\n\nIn the provided code snippet, `strlen(\"]]>\")`, there is no direct vulnerability as the string is a string literal which is automatically null-terminated by the compiler. However, if the string was user input or came from an untrusted source, there could be potential issues.\n\n## Mitigation Advice\n\nTo mitigate potential issues with `strlen`, ensure that all strings are properly null-terminated. Be cautious when dealing with user input or data from untrusted sources. Consider using safer alternatives to `strlen` when possible, such as `strnlen`, which takes a maximum length parameter and will not read beyond this length, even if it does not encounter a null character.\n\n## Source Code Fix Recommendation\n\nIn the provided code snippet, there is no direct fix needed as the string is a string literal and automatically null-terminated. However, if the string was user input or from an untrusted source, you could use `strnlen` as follows:\n\n```cpp\n#include <string.h>\n\n// Define a maximum length for the string\n#define MAX_LENGTH 100\n\n// ...\n\nchar* str = /* string from user or untrusted source */;\nsize_t length = strnlen(str, MAX_LENGTH);\n```\n\n## Library Dependencies\n\nThe `strlen` function is part of the C standard library, so no additional libraries are needed to use it. If using `strnlen`, this is also part of the C standard library (specifically, it is included in `string.h`).\n\n## Resources\n\n- [OWASP C/C++ Vulnerabilities](https://owasp.org/www-pdf-archive/OWASP_SCP_Quick_Reference_Guide_v2.pdf)"
+              },
+              "properties": {
+                "tags": [
+                  "DS140021"
+                ]
+              }
+            },
+            {
+              "id": "glog-1df3ad15-d88a-4f3b-89c8-952f9952264a",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nAn \"Unsecured Web Address\" vulnerability refers to the use of unencrypted HTTP protocol instead of the secure HTTPS protocol for communication. This can lead to Man-in-the-Middle (MitM) attacks where an attacker can intercept and possibly alter the communication between the client and the server. In C++ programming, this vulnerability can occur when libraries or functions that perform HTTP requests are used without ensuring the use of HTTPS.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always use HTTPS for all web communications. HTTPS ensures that all communication between the client and the server is encrypted and cannot be read or altered by an attacker even if they manage to intercept the communication.\n\n## Source Code Fix Recommendation\n\nThe specific vulnerability sink provided does not contain any C++ code, but here is a general recommendation for using HTTPS in C++:\n\n```cpp\n#include <curl/curl.h>\n\nint main(void)\n{\n  CURL *curl;\n  CURLcode res;\n\n  curl_global_init(CURL_GLOBAL_DEFAULT);\n\n  curl = curl_easy_init();\n  if(curl) {\n    curl_easy_setopt(curl, CURLOPT_URL, \"https://code.google.com\");\n\n    /* Perform the request, res will get the return code */ \n    res = curl_easy_perform(curl);\n    /* Check for errors */ \n    if(res != CURLE_OK)\n      fprintf(stderr, \"curl_easy_perform() failed: %s\\n\",\n              curl_easy_strerror(res));\n\n    /* always cleanup */ \n    curl_easy_cleanup(curl);\n  }\n\n  curl_global_cleanup();\n\n  return 0;\n}\n```\n\n## Library Dependencies\n\nThe above code requires the libcurl library. You can install it using the package manager for your system. For example, on Ubuntu, you can install it with:\n\n```\nsudo apt-get install libcurl4-openssl-dev\n```\n\n## OWASP Resources\n\n- [OWASP Secure Coding Practices](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/)\n- [OWASP Top 10 2017: A6-Security Misconfiguration](https://owasp.org/www-project-top-ten/2017/A6_2017-Security_Misconfiguration)\n\n## Common Weakness Enumeration (CWE)\n"
+              },
+              "properties": {
+                "tags": [
+                  "DS137138"
+                ]
+              }
+            },
+            {
+              "id": "glog-dc981101-d55d-4644-9564-bfb50cf5f014",
+              "help": {
+                "text": "",
+                "markdown": "### Description\n\nThe vulnerability associated with the `strlen` function in C++ arises from its inability to handle non-null-terminated strings. If `strlen` is called on a string that is not properly null-terminated, it can lead to undefined behavior, including buffer overflows, which can be exploited to execute arbitrary code or cause a program crash. This is particularly dangerous when dealing with user input or data from untrusted sources.\n\n### General Mitigation Advice\n\n1. **Ensure Proper Null-Termination**: Always ensure that strings are null-terminated before passing them to `strlen`.\n2. **Use Safer Alternatives**: Consider using safer alternatives like `std::string` in C++ which manages null-termination automatically.\n3. **Input Validation**: Validate and sanitize all inputs to ensure they conform to expected formats and lengths.\n4. **Bounds Checking**: Implement bounds checking to ensure that buffer sizes are respected.\n\n### Source Code Fix Recommendation\n\nHere is an example of how to safely use `strlen` with proper null-termination:\n\n```cpp\n#include <iostream>\n#include <cstring> // Required for strlen\n\nint main() {\n    const char* c_str = \"Hello, World!\";\n    \n    // Ensure the string is null-terminated\n    if (c_str[std::strlen(c_str)] == '\\0') {\n        std::cout << \"Length of string: \" << std::strlen(c_str) << std::endl;\n    } else {\n        std::cerr << \"String is not null-terminated!\" << std::endl;\n    }\n\n    return 0;\n}\n```\n\n### Library Dependencies\n\nTo execute the above code, the following standard libraries are required:\n\n- `<iostream>`: For input and output stream operations.\n- `<cstring>`: For C-style string handling functions like `strlen`.\n\n### Relevant Resources\n\n- [OWASP Top Ten](https://owasp.org/www-project-top-ten/)\n- [OWASP Secure Coding Practices](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/)\n\n### Common Weakness Enumeration\n\n- [CWE-170: Improper Null Termination](https://cwe.mitre.org/data/definitions/170.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS140021"
+                ]
+              }
+            },
+            {
+              "id": "glog-44344768-5788-48be-97f9-3889a39566dc",
+              "help": {
+                "text": "",
+                "markdown": "### Description\n\nThe \"Detected Issue with C Function (strlen)\" vulnerability in C++ arises when the `strlen` function is used improperly, potentially leading to buffer overflows or reading beyond the intended memory bounds. This can occur if the input string is not null-terminated or if the function is used without proper bounds checking. Such vulnerabilities can lead to undefined behavior, crashes, or security issues like information disclosure or code execution.\n\n### General Mitigation Advice\n\n1. **Input Validation**: Always validate input to ensure it is null-terminated before passing it to `strlen`.\n2. **Bounds Checking**: Use safer alternatives like `strnlen` where you can specify the maximum number of characters to read.\n3. **Use Safer Libraries**: Consider using safer string handling libraries that automatically manage memory and prevent overflows.\n4. **Static Analysis Tools**: Employ static analysis tools to detect potential vulnerabilities in your code.\n\n### Source Code Fix Recommendation\n\nReplace the use of `strlen` with `strnlen` to ensure that the function does not read beyond the intended buffer size.\n\n```cpp\n#include <cstring> // Required for strnlen\n\nsize_t safe_strlen(const char* suffix, size_t max_len) {\n    return strnlen(suffix, max_len);\n}\n\nint main() {\n    const char* suffix = \"example\";\n    size_t max_len = 100; // Define a reasonable maximum length\n    size_t length = safe_strlen(suffix, max_len);\n    // Use length safely\n    return 0;\n}\n```\n\n### Library Dependencies\n\n- `<cstring>`: Required for `strnlen`.\n\n### OWASP Resources\n\n- [OWASP Top Ten](https://owasp.org/www-project-top-ten/)\n- [OWASP Secure Coding Practices](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/)\n\n### Common Weakness Enumeration (CWE)\n\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n- [CWE-126: Buffer Over-read](https://cwe.mitre.org/data/definitions/126.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS140021"
+                ]
+              }
+            },
+            {
+              "id": "glog-592450a5-c4ea-4ffd-a765-2f5c46a39383",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `strlen()` function in C++ is used to find the length of a string. However, it can lead to vulnerabilities if not used properly. The function counts the number of characters in a string up to but not including the null character. If the string is not null-terminated, `strlen()` will continue reading memory until it encounters a null byte, which can lead to buffer overflows, memory corruption, and other unexpected behavior.\n\n## Mitigation Advice\n\nTo mitigate this issue, always ensure that your strings are null-terminated. Avoid using `strlen()` on strings that may not be null-terminated. Instead, consider using safer alternatives that take the size of the buffer as an argument, such as `strnlen()`, which will not read past the specified length, even if it does not encounter a null byte.\n\n## Source Code Fix Recommendation\n\nInstead of:\n\n```cpp\n#include <cstring>\n\nchar ansi[100];\n// ... populate ansi ...\nsize_t len = strlen(ansi);\n```\n\nUse:\n\n```cpp\n#include <cstring>\n\nchar ansi[100];\n// ... populate ansi ...\nsize_t len = strnlen(ansi, sizeof(ansi));\n```\n\n## Library Dependencies\n\nThe code example requires the `<cstring>` library.\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS140021"
+                ]
+              }
+            }
+          ],
+          "language": "en-US",
+          "contents": [
+            "localizedData",
+            "nonLocalizedData"
+          ],
+          "isComprehensive": false
+        }
+      },
+      "language": "en-US",
+      "results": [
+        {
+          "ruleId": "glog-ce953cba-244f-467b-b1c8-dc005373b1f2",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Avoid Using Weak or Non-Cryptographic Random Number Generators"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest.h"
+                },
+                "region": {
+                  "startLine": 7434,
+                  "startColumn": 11,
+                  "endLine": 7434,
+                  "endColumn": 18,
+                  "charOffset": 330797,
+                  "charLength": 7,
+                  "snippet": {
+                    "text": "Random(",
+                    "rendered": {
+                      "text": "Random(",
+                      "markdown": "`Random(`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Important",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "Cryptography.PRNG.Weak"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-23ee7553-7380-4082-a799-b584c009fe8b",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "\"Unsecured URL\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest.h"
+                },
+                "region": {
+                  "startLine": 7036,
+                  "startColumn": 5,
+                  "endLine": 7036,
+                  "endColumn": 35,
+                  "charOffset": 315771,
+                  "charLength": 30,
+                  "snippet": {
+                    "text": "http://www.cygnus-software.com",
+                    "rendered": {
+                      "text": "http://www.cygnus-software.com",
+                      "markdown": "`http://www.cygnus-software.com`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "An HTTP-based URL without TLS was detected."
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 315771,
+                        "charLength": 30
+                      },
+                      "insertedContent": {
+                        "text": "https://www.cygnus-software.com"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "ThreatModel.Integration.HTTP"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-087c8ca5-5367-42df-a067-19a55f9962a5",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "\"Detected Issue with C Function (strlen)\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest.h"
+                },
+                "region": {
+                  "startLine": 3050,
+                  "startColumn": 32,
+                  "endLine": 3050,
+                  "endColumn": 47,
+                  "charOffset": 103166,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "strlen(a_c_str)",
+                    "rendered": {
+                      "text": "strlen(a_c_str)",
+                      "markdown": "`strlen(a_c_str)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 103166,
+                        "charLength": 15
+                      },
+                      "insertedContent": {
+                        "text": "strlen_s(a_c_str, <size of a_c_str>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 103166,
+                        "charLength": 15
+                      },
+                      "insertedContent": {
+                        "text": "strnlen(a_c_str, <size of a_c_str>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-f099dcad-eafb-44b1-8082-69f7bb0be4eb",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "\"Unsecured URL\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest.h"
+                },
+                "region": {
+                  "startLine": 7119,
+                  "startColumn": 10,
+                  "endLine": 7119,
+                  "endColumn": 33,
+                  "charOffset": 318792,
+                  "charLength": 23,
+                  "snippet": {
+                    "text": "http://en.wikipedia.org",
+                    "rendered": {
+                      "text": "http://en.wikipedia.org",
+                      "markdown": "`http://en.wikipedia.org`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "An HTTP-based URL without TLS was detected."
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 318792,
+                        "charLength": 23
+                      },
+                      "insertedContent": {
+                        "text": "https://en.wikipedia.org"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "ThreatModel.Integration.HTTP"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-ca046faa-5af5-4aac-b58e-eb08a3d0905c",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "\"Unsecured URL\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest.h"
+                },
+                "region": {
+                  "startLine": 6991,
+                  "startColumn": 5,
+                  "endLine": 6991,
+                  "endColumn": 28,
+                  "charOffset": 314131,
+                  "charLength": 23,
+                  "snippet": {
+                    "text": "http://en.wikipedia.org",
+                    "rendered": {
+                      "text": "http://en.wikipedia.org",
+                      "markdown": "`http://en.wikipedia.org`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "An HTTP-based URL without TLS was detected."
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 314131,
+                        "charLength": 23
+                      },
+                      "insertedContent": {
+                        "text": "https://en.wikipedia.org"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "ThreatModel.Integration.HTTP"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-e47e6e33-64f8-4c70-835b-fefde91dec4b",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "\"Detected Use of Prohibited C Function (strncpy)\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest.h"
+                },
+                "region": {
+                  "startLine": 2672,
+                  "startColumn": 9,
+                  "endLine": 2672,
+                  "endColumn": 30,
+                  "charOffset": 89154,
+                  "charLength": 21,
+                  "snippet": {
+                    "text": "strncpy(dest, src, n)",
+                    "rendered": {
+                      "text": "strncpy(dest, src, n)",
+                      "markdown": "`strncpy(dest, src, n)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "strncpy is dangerous, as if the source contains 'n' or more characters, it will not null terminate the destination."
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 89154,
+                        "charLength": 21
+                      },
+                      "insertedContent": {
+                        "text": "strcpy_s(dest,  n,  src)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "description": {
+                "text": "strncpy is dangerous, as if the source contains 'n' or more characters, it will not null terminate the destination."
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 89154,
+                        "charLength": 21
+                      },
+                      "insertedContent": {
+                        "text": "strlcpy(dest,  src,  n)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Important",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.BannedFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-6e5e2b23-d2f3-4907-b05b-30e574dba889",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "\"Detected Issue with C Function (memcpy)\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest.h"
+                },
+                "region": {
+                  "startLine": 3154,
+                  "startColumn": 4,
+                  "endLine": 3154,
+                  "endColumn": 33,
+                  "charOffset": 107155,
+                  "charLength": 29,
+                  "snippet": {
+                    "text": "memcpy(str, buffer, a_length)",
+                    "rendered": {
+                      "text": "memcpy(str, buffer, a_length)",
+                      "markdown": "`memcpy(str, buffer, a_length)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 107155,
+                        "charLength": 29
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(str, <size of str>,  buffer,  a_length)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-7cd23e6d-f00a-4282-8c97-41806ac937d0",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Issue Detected with C Function (malloc) That's Causing Problems"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest-all.cpp"
+                },
+                "region": {
+                  "startLine": 8209,
+                  "startColumn": 36,
+                  "endLine": 8209,
+                  "endColumn": 51,
+                  "charOffset": 306318,
+                  "charLength": 15,
+                  "snippet": {
+                    "text": "malloc(len + 3)",
+                    "rendered": {
+                      "text": "malloc(len + 3)",
+                      "markdown": "`malloc(len + 3)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If the value provided to malloc is the result of unsafe integer math, it can result in an exploitable condition. "
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 306318,
+                        "charLength": 15
+                      },
+                      "insertedContent": {
+                        "text": "calloc(<number of elements>, <size of each element>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-1817e8c7-b6b0-4d05-9db3-95c8e645fa4b",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Unsecured Web Address"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest.h"
+                },
+                "region": {
+                  "startLine": 300,
+                  "startColumn": 28,
+                  "endLine": 300,
+                  "endColumn": 50,
+                  "charOffset": 14343,
+                  "charLength": 22,
+                  "snippet": {
+                    "text": "http://code.google.com",
+                    "rendered": {
+                      "text": "http://code.google.com",
+                      "markdown": "`http://code.google.com`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "An HTTP-based URL without TLS was detected."
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 14343,
+                        "charLength": 22
+                      },
+                      "insertedContent": {
+                        "text": "https://code.google.com"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "ThreatModel.Integration.HTTP"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-d9a71419-0b60-4362-90bf-b98c4d5954bc",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Issue Detected with C Function (strlen)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest-all.cpp"
+                },
+                "region": {
+                  "startLine": 8853,
+                  "startColumn": 28,
+                  "endLine": 8853,
+                  "endColumn": 37,
+                  "charOffset": 327692,
+                  "charLength": 9,
+                  "snippet": {
+                    "text": "strlen(s)",
+                    "rendered": {
+                      "text": "strlen(s)",
+                      "markdown": "`strlen(s)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 327692,
+                        "charLength": 9
+                      },
+                      "insertedContent": {
+                        "text": "strlen_s(s, <size of s>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 327692,
+                        "charLength": 9
+                      },
+                      "insertedContent": {
+                        "text": "strnlen(s, <size of s>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-4fec38fc-d545-48b8-aedb-de5cb0bc148a",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Issue Detected with C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest-all.cpp"
+                },
+                "region": {
+                  "startLine": 8217,
+                  "startColumn": 2,
+                  "endLine": 8217,
+                  "endColumn": 28,
+                  "charOffset": 306553,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "memcpy(buffer, regex, len)",
+                    "rendered": {
+                      "text": "memcpy(buffer, regex, len)",
+                      "markdown": "`memcpy(buffer, regex, len)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 306553,
+                        "charLength": 26
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(buffer, <size of buffer>,  regex,  len)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-1a45bdfe-035e-4254-99e3-a6f4e405c287",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Issue Detected with C Function (strlen)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest-all.cpp"
+                },
+                "region": {
+                  "startLine": 8205,
+                  "startColumn": 21,
+                  "endLine": 8205,
+                  "endColumn": 34,
+                  "charOffset": 306094,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "strlen(regex)",
+                    "rendered": {
+                      "text": "strlen(regex)",
+                      "markdown": "`strlen(regex)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 306094,
+                        "charLength": 13
+                      },
+                      "insertedContent": {
+                        "text": "strlen_s(regex, <size of regex>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 306094,
+                        "charLength": 13
+                      },
+                      "insertedContent": {
+                        "text": "strnlen(regex, <size of regex>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-846fbdc6-9515-4b43-a424-7b4bed113650",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "\"Unsecured URL\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest-all.cpp"
+                },
+                "region": {
+                  "startLine": 6885,
+                  "startColumn": 13,
+                  "endLine": 6885,
+                  "endColumn": 38,
+                  "charOffset": 258065,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "http://msdn.microsoft.com",
+                    "rendered": {
+                      "text": "http://msdn.microsoft.com",
+                      "markdown": "`http://msdn.microsoft.com`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "An HTTP-based URL without TLS was detected."
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 258065,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "https://msdn.microsoft.com"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "ThreatModel.Integration.HTTP"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-1aef928c-5ad9-4529-8399-a2282c387187",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Issue Detected with C Function (strlen)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest-all.cpp"
+                },
+                "region": {
+                  "startLine": 4745,
+                  "startColumn": 17,
+                  "endLine": 4745,
+                  "endColumn": 28,
+                  "charOffset": 177349,
+                  "charLength": 11,
+                  "snippet": {
+                    "text": "strlen(str)",
+                    "rendered": {
+                      "text": "strlen(str)",
+                      "markdown": "`strlen(str)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 177349,
+                        "charLength": 11
+                      },
+                      "insertedContent": {
+                        "text": "strlen_s(str, <size of str>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 177349,
+                        "charLength": 11
+                      },
+                      "insertedContent": {
+                        "text": "strnlen(str, <size of str>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-12626098-34e4-42a7-b8e3-0f5c980fe3e2",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Issue Detected with C Function (strlen)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest-all.cpp"
+                },
+                "region": {
+                  "startLine": 4740,
+                  "startColumn": 58,
+                  "endLine": 4740,
+                  "endColumn": 69,
+                  "charOffset": 177118,
+                  "charLength": 11,
+                  "snippet": {
+                    "text": "strlen(str)",
+                    "rendered": {
+                      "text": "strlen(str)",
+                      "markdown": "`strlen(str)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 177118,
+                        "charLength": 11
+                      },
+                      "insertedContent": {
+                        "text": "strlen_s(str, <size of str>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 177118,
+                        "charLength": 11
+                      },
+                      "insertedContent": {
+                        "text": "strnlen(str, <size of str>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-f9553f11-d478-4565-955e-7d62d4a16a6e",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Issue Detected with C Function (strlen)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest-all.cpp"
+                },
+                "region": {
+                  "startLine": 7951,
+                  "startColumn": 32,
+                  "endLine": 7951,
+                  "endColumn": 45,
+                  "charOffset": 296881,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "strlen(regex)",
+                    "rendered": {
+                      "text": "strlen(regex)",
+                      "markdown": "`strlen(regex)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 296881,
+                        "charLength": 13
+                      },
+                      "insertedContent": {
+                        "text": "strlen_s(regex, <size of regex>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 296881,
+                        "charLength": 13
+                      },
+                      "insertedContent": {
+                        "text": "strnlen(regex, <size of regex>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-6edeb151-428c-4bf4-a16f-59c04158bb1c",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Issue Detected with C Function (strlen)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest-all.cpp"
+                },
+                "region": {
+                  "startLine": 5850,
+                  "startColumn": 28,
+                  "endLine": 5850,
+                  "endColumn": 42,
+                  "charOffset": 218338,
+                  "charLength": 14,
+                  "snippet": {
+                    "text": "strlen(prefix)",
+                    "rendered": {
+                      "text": "strlen(prefix)",
+                      "markdown": "`strlen(prefix)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 218338,
+                        "charLength": 14
+                      },
+                      "insertedContent": {
+                        "text": "strlen_s(prefix, <size of prefix>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 218338,
+                        "charLength": 14
+                      },
+                      "insertedContent": {
+                        "text": "strnlen(prefix, <size of prefix>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-778bbabe-5bad-4bde-b41f-d748ab7bfc0d",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Issue Detected with C Function (strlen) That's Problematic"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest-all.cpp"
+                },
+                "region": {
+                  "startLine": 4516,
+                  "startColumn": 31,
+                  "endLine": 4516,
+                  "endColumn": 44,
+                  "charOffset": 169002,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "strlen(\"]]>\")",
+                    "rendered": {
+                      "text": "strlen(\"]]>\")",
+                      "markdown": "`strlen(\"]]>\")`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 169002,
+                        "charLength": 13
+                      },
+                      "insertedContent": {
+                        "text": "strlen_s(\"]]>\", <size of \"]]>\">)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 169002,
+                        "charLength": 13
+                      },
+                      "insertedContent": {
+                        "text": "strnlen(\"]]>\", <size of \"]]>\">)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-1df3ad15-d88a-4f3b-89c8-952f9952264a",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Unsecured Web Address"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest-all.cpp"
+                },
+                "region": {
+                  "startLine": 5678,
+                  "startColumn": 3,
+                  "endLine": 5678,
+                  "endColumn": 25,
+                  "charOffset": 211755,
+                  "charLength": 22,
+                  "snippet": {
+                    "text": "http://code.google.com",
+                    "rendered": {
+                      "text": "http://code.google.com",
+                      "markdown": "`http://code.google.com`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "An HTTP-based URL without TLS was detected."
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 211755,
+                        "charLength": 22
+                      },
+                      "insertedContent": {
+                        "text": "https://code.google.com"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "ThreatModel.Integration.HTTP"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-dc981101-d55d-4644-9564-bfb50cf5f014",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "\"Identified Issue with C Function (strlen)\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest-all.cpp"
+                },
+                "region": {
+                  "startLine": 2987,
+                  "startColumn": 26,
+                  "endLine": 2987,
+                  "endColumn": 40,
+                  "charOffset": 113922,
+                  "charLength": 14,
+                  "snippet": {
+                    "text": "strlen(c_str()",
+                    "rendered": {
+                      "text": "strlen(c_str()",
+                      "markdown": "`strlen(c_str()`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 113922,
+                        "charLength": 14
+                      },
+                      "insertedContent": {
+                        "text": "strlen_s(c_str(, <size of c_str(>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 113922,
+                        "charLength": 14
+                      },
+                      "insertedContent": {
+                        "text": "strnlen(c_str(, <size of c_str(>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-44344768-5788-48be-97f9-3889a39566dc",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "\"Detected Issue with C Function (strlen)\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest-all.cpp"
+                },
+                "region": {
+                  "startLine": 2988,
+                  "startColumn": 28,
+                  "endLine": 2988,
+                  "endColumn": 42,
+                  "charOffset": 113967,
+                  "charLength": 14,
+                  "snippet": {
+                    "text": "strlen(suffix)",
+                    "rendered": {
+                      "text": "strlen(suffix)",
+                      "markdown": "`strlen(suffix)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 113967,
+                        "charLength": 14
+                      },
+                      "insertedContent": {
+                        "text": "strlen_s(suffix, <size of suffix>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 113967,
+                        "charLength": 14
+                      },
+                      "insertedContent": {
+                        "text": "strnlen(suffix, <size of suffix>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "glog-592450a5-c4ea-4ffd-a765-2f5c46a39383",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Issue Detected with C Function (strlen)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/gtest/gtest-all.cpp"
+                },
+                "region": {
+                  "startLine": 2164,
+                  "startColumn": 21,
+                  "endLine": 2164,
+                  "endColumn": 33,
+                  "charOffset": 82942,
+                  "charLength": 12,
+                  "snippet": {
+                    "text": "strlen(ansi)",
+                    "rendered": {
+                      "text": "strlen(ansi)",
+                      "markdown": "`strlen(ansi)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 82942,
+                        "charLength": 12
+                      },
+                      "insertedContent": {
+                        "text": "strlen_s(ansi, <size of ansi>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "description": {
+                "text": "If a string is missing a null terminator, strlen will read past the end of the buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "src/gtest/gtest-all.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 82942,
+                        "charLength": 12
+                      },
+                      "insertedContent": {
+                        "text": "strnlen(ansi, <size of ansi>)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        }
+      ],
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ]
+    }
+  ]
+}
